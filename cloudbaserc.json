@@ -1,0 +1,18 @@
+{
+  "version": "2.0",
+  "envId": "dogchoice-d0ge10y4pa4f11f64",
+  "app": {
+    "serviceName": "work-life-h5",
+    "root": ".",
+    "framework": "static",
+    "installCommand": "",
+    "buildCommand": "",
+    "outputDir": "./",
+    "deployPath": "/",
+    "ignore": [
+      ".git/**",
+      ".DS_Store",
+      "cloudbaserc.json"
+    ]
+  }
+}

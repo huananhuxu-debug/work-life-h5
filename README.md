@@ -101,3 +101,26 @@ D = 4 分
 ```text
 纯趣味测试，非科学评估，结果仅供参考。
 ```
+
+## 5. 腾讯云 CLI 部署
+
+已安装 CloudBase CLI：
+
+```text
+tcb：/Users/huananhu/.local/bin/tcb
+版本：CloudBase CLI 3.5.8
+环境 ID：dogchoice-d0ge10y4pa4f11f64
+应用名称：work-life-h5
+```
+
+当前目录已配置 `cloudbaserc.json`。以后修改 H5 后，在本目录执行：
+
+```bash
+tcb app deploy work-life-h5 --force
+```
+
+CLI 会部署到腾讯云 CloudBase 静态网站托管，正式访问地址保持：
+
+```text
+https://work-life-h5-dogchoice-d0ge10y4pa4f11f64.webapps.tcloudbase.com/
+```
