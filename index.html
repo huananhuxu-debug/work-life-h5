@@ -1,0 +1,1675 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f7f3ec">
+  <meta name="description" content="24 题职业状态测试，判断你该换工作、换行业，还是换一种活法。">
+  <link rel="icon" href="data:,">
+  <title>你该换工作，还是换活法？</title>
+  <style>
+    :root {
+      --bg: #f7f3ec;
+      --paper: #fffdf8;
+      --ink: #1d1a16;
+      --muted: #6f6a61;
+      --line: #ded5c7;
+      --soft: #ece4d7;
+      --brand: #256d85;
+      --brand-dark: #16495f;
+      --accent: #d96d3b;
+      --green: #4f7f55;
+      --shadow: 0 18px 50px rgba(44, 37, 28, 0.16);
+      --radius: 8px;
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.62), rgba(255,255,255,0)),
+        var(--bg);
+      color: var(--ink);
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+      letter-spacing: 0;
+    }
+
+    button, input, textarea {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+    }
+
+    .app-shell {
+      width: min(100%, 520px);
+      min-height: 100vh;
+      background: var(--paper);
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .screen {
+      display: none;
+      min-height: 100vh;
+      padding: 22px 20px calc(24px + env(safe-area-inset-bottom));
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      min-height: 38px;
+      margin-bottom: 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-size: 13px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .brand img {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      object-fit: cover;
+      border: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 28px;
+      padding: 5px 9px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 12px;
+      background: rgba(255,255,255,0.72);
+      white-space: nowrap;
+    }
+
+    .quiz-topbar {
+      justify-content: flex-end;
+      min-height: 32px;
+      margin-bottom: 12px;
+    }
+
+    .quiz-system-pill {
+      min-width: 72px;
+      flex: 0 0 auto;
+    }
+
+    .hero {
+      padding: 18px 0 8px;
+    }
+
+    .eyebrow {
+      color: var(--brand);
+      font-weight: 700;
+      font-size: 14px;
+      margin: 0 0 14px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 38px;
+      line-height: 1.08;
+      font-weight: 900;
+      letter-spacing: 0;
+    }
+
+    .lead {
+      margin: 18px 0 0;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.72;
+    }
+
+    .hero-visual {
+      margin: 22px 0;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background:
+        linear-gradient(135deg, rgba(37,109,133,0.08), rgba(217,109,59,0.08)),
+        #fffaf1;
+      min-height: 190px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .door-scene {
+      position: absolute;
+      inset: 20px 18px 14px;
+      display: grid;
+      grid-template-columns: 1fr 62px 1fr;
+      align-items: end;
+      gap: 10px;
+    }
+
+    .door {
+      height: 136px;
+      border: 2px solid #2a251d;
+      border-bottom: 5px solid #2a251d;
+      background: #fffdf8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      font-weight: 800;
+      font-size: 18px;
+    }
+
+    .door.work { border-color: var(--brand-dark); }
+    .door.life { border-color: var(--accent); }
+
+    .person {
+      align-self: end;
+      justify-self: center;
+      width: 42px;
+      height: 92px;
+      position: relative;
+    }
+
+    .person::before {
+      content: "";
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: #2a251d;
+      left: 6px;
+      top: 0;
+    }
+
+    .person::after {
+      content: "";
+      position: absolute;
+      width: 38px;
+      height: 58px;
+      border-radius: 18px 18px 6px 6px;
+      background: #2a251d;
+      left: 2px;
+      bottom: 0;
+    }
+
+    .cta-stack {
+      display: grid;
+      gap: 10px;
+      margin-top: 22px;
+    }
+
+    .primary-btn, .secondary-btn, .ghost-btn {
+      width: 100%;
+      min-height: 50px;
+      border-radius: var(--radius);
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 12px 14px;
+    }
+
+    .primary-btn {
+      color: #fff;
+      background: var(--brand);
+    }
+
+    .primary-btn:disabled {
+      opacity: 0.62;
+      cursor: not-allowed;
+    }
+
+    .secondary-btn {
+      color: var(--brand-dark);
+      background: #e4f0f3;
+      border: 1px solid rgba(37,109,133,0.22);
+    }
+
+    .ghost-btn {
+      color: var(--ink);
+      background: transparent;
+      border: 1px solid var(--line);
+    }
+
+    .microcopy {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+      margin: 12px 0 0;
+    }
+
+    .progress-wrap {
+      margin: 8px 0 18px;
+    }
+
+    .progress-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 9px;
+    }
+
+    .progress-track {
+      height: 8px;
+      border-radius: 999px;
+      background: var(--soft);
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0;
+      background: var(--brand);
+      transition: width 180ms ease;
+    }
+
+    .question-card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fffdf9;
+      padding: 18px;
+      min-height: 470px;
+    }
+
+    .system-name {
+      color: var(--accent);
+      font-weight: 800;
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+
+    .question-title {
+      margin: 0 0 18px;
+      font-size: 22px;
+      line-height: 1.38;
+      font-weight: 900;
+    }
+
+    .options {
+      display: grid;
+      gap: 10px;
+    }
+
+    .option-btn {
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      min-height: 58px;
+      text-align: left;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+      color: var(--ink);
+      padding: 10px 12px;
+    }
+
+    .option-btn.selected {
+      border-color: var(--brand);
+      background: #edf7f9;
+    }
+
+    .option-key {
+      width: 30px;
+      height: 30px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 6px;
+      background: var(--soft);
+      color: var(--brand-dark);
+      font-weight: 900;
+    }
+
+    .option-text {
+      font-size: 15px;
+      line-height: 1.45;
+      overflow-wrap: anywhere;
+    }
+
+    .quiz-nav {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .loading-box {
+      min-height: 72vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      gap: 18px;
+    }
+
+    .loader {
+      width: 74px;
+      height: 74px;
+      border-radius: 50%;
+      border: 8px solid var(--soft);
+      border-top-color: var(--brand);
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+      font-size: 20px;
+      line-height: 1.4;
+      font-weight: 900;
+    }
+
+    .report-head {
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 16px;
+      margin-bottom: 16px;
+    }
+
+    .report-title {
+      font-size: 31px;
+      line-height: 1.14;
+      margin: 8px 0 12px;
+      font-weight: 900;
+    }
+
+    .report-subtitle {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin: 16px 0;
+    }
+
+    .metric {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 12px;
+      background: #fff;
+    }
+
+    .metric-label {
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 7px;
+    }
+
+    .metric-value {
+      font-weight: 900;
+      font-size: 17px;
+      line-height: 1.35;
+    }
+
+    .section {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+      padding: 15px;
+      margin: 12px 0;
+    }
+
+    .section h2 {
+      margin: 0 0 10px;
+      font-size: 18px;
+      line-height: 1.32;
+    }
+
+    .section p {
+      color: var(--muted);
+      margin: 0;
+      line-height: 1.72;
+      font-size: 15px;
+    }
+
+    .chart-shell {
+      margin-top: 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fbf8f1;
+      padding: 12px;
+    }
+
+    .radar-chart {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .donut-layout {
+      display: grid;
+      grid-template-columns: 126px 1fr;
+      gap: 14px;
+      align-items: center;
+      margin: 12px 0 12px;
+    }
+
+    .donut-chart {
+      width: 126px;
+      height: 126px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: conic-gradient(var(--brand) 0 25%, #7a8798 25% 50%, #8aa376 50% 75%, #d7a15e 75% 100%);
+    }
+
+    .donut-center {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: #fffdf8;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+      font-weight: 800;
+    }
+
+    .legend {
+      display: grid;
+      gap: 8px;
+    }
+
+    .legend-item {
+      display: grid;
+      grid-template-columns: 10px 1fr auto;
+      gap: 8px;
+      align-items: center;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .tag {
+      border-radius: 999px;
+      background: #edf4f2;
+      color: var(--brand-dark);
+      padding: 6px 9px;
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .detail-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .detail-item {
+      border-left: 4px solid var(--line);
+      background: #fbf8f1;
+      border-radius: 0 var(--radius) var(--radius) 0;
+      padding: 10px 12px;
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 14px;
+    }
+
+    .detail-item strong {
+      color: var(--ink);
+      display: block;
+      margin-bottom: 3px;
+    }
+
+    .warning-box {
+      margin-top: 12px;
+      border: 1px solid #f3d4ce;
+      background: #fff4f2;
+      color: #8b3d2c;
+      border-radius: var(--radius);
+      padding: 12px;
+      line-height: 1.65;
+      font-size: 14px;
+    }
+
+    .comparison-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .comparison-card {
+      border-radius: var(--radius);
+      padding: 12px;
+      min-height: 132px;
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    .comparison-card.keep {
+      background: #fff4f2;
+      color: #7a3d30;
+    }
+
+    .comparison-card.change {
+      background: #eef7f2;
+      color: #315f44;
+    }
+
+    .comparison-card strong {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--ink);
+    }
+
+    .score-bars {
+      display: grid;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .score-row {
+      display: grid;
+      grid-template-columns: 72px 54px 1fr 34px;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .status-chip {
+      min-width: 50px;
+      border-radius: 999px;
+      padding: 4px 7px;
+      text-align: center;
+      font-size: 11px;
+      font-weight: 900;
+      line-height: 1.2;
+      white-space: nowrap;
+    }
+
+    .status-chip.low {
+      background: #edf4f2;
+      color: #356950;
+    }
+
+    .status-chip.mid {
+      background: #f5efd8;
+      color: #87622b;
+    }
+
+    .status-chip.high {
+      background: #fff0e8;
+      color: #9b4c27;
+    }
+
+    .status-chip.critical {
+      background: #fff1f1;
+      color: #9f3333;
+    }
+
+    .bar-track {
+      height: 10px;
+      background: var(--soft);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      width: 0;
+      background: var(--brand);
+    }
+
+    .route-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 10px;
+    }
+
+    .route-list li {
+      border-left: 4px solid var(--brand);
+      padding: 8px 0 8px 12px;
+      color: var(--muted);
+      line-height: 1.58;
+    }
+
+    .note {
+      border: 1px solid #f0d0bf;
+      background: #fff7f2;
+      color: #7a3d20;
+      border-radius: var(--radius);
+      padding: 12px;
+      font-size: 13px;
+      line-height: 1.6;
+      margin-top: 12px;
+    }
+
+    .sticky-actions {
+      position: sticky;
+      bottom: 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      padding: 12px 0 calc(10px + env(safe-area-inset-bottom));
+      background: linear-gradient(180deg, rgba(255,253,248,0), var(--paper) 22%);
+      margin-top: 10px;
+    }
+
+    .copy-fallback {
+      display: none;
+      margin-top: 12px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+      padding: 12px;
+    }
+
+    .copy-fallback.active {
+      display: block;
+    }
+
+    .copy-fallback label {
+      display: block;
+      font-size: 13px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      color: var(--ink);
+    }
+
+    .copy-fallback textarea {
+      width: 100%;
+      min-height: 150px;
+      resize: vertical;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 10px;
+      line-height: 1.55;
+      color: var(--ink);
+      background: #fffdf8;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 22px;
+      transform: translateX(-50%) translateY(20px);
+      opacity: 0;
+      background: rgba(29, 26, 22, 0.92);
+      color: #fff;
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-size: 13px;
+      pointer-events: none;
+      transition: opacity 160ms ease, transform 160ms ease;
+      z-index: 20;
+      max-width: calc(100% - 32px);
+      text-align: center;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    @media (min-width: 700px) {
+      body { padding: 28px 0; }
+      .app-shell {
+        min-height: calc(100vh - 56px);
+        border-radius: 18px;
+      }
+      .screen { min-height: calc(100vh - 56px); }
+    }
+  </style>
+</head>
+<body>
+  <main class="app-shell">
+    <section id="home-screen" class="screen active">
+      <div class="topbar">
+        <div class="brand">
+          <img src="assets/avatar.png" alt="柴犬的选择题头像">
+          <span>柴犬的选择题</span>
+        </div>
+        <span class="pill">24 题 · 约 3 分钟</span>
+      </div>
+
+      <div class="hero">
+        <p class="eyebrow">职业状态测试报告</p>
+        <h1>你该换工作，还是换活法？</h1>
+        <p class="lead">
+          有时候想离开的，未必是公司。也可能是你已经很久没有喜欢过现在的生活了。
+        </p>
+      </div>
+
+      <div class="hero-visual" aria-hidden="true">
+        <div class="door-scene">
+          <div class="door work">Work</div>
+          <div class="person"></div>
+          <div class="door life">Life</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>这份报告会看 4 个系统</h2>
+        <p>工作认同、能量恢复、成长期待、生活结构。系统会根据你的选择判断核心问题、次级问题和未来 30 天行动顺序。</p>
+      </div>
+
+      <div class="cta-stack">
+        <button id="start-btn" class="primary-btn" type="button">开始诊断</button>
+      </div>
+      <p class="microcopy">纯趣味测试，非科学评估。结果只作为自我观察和行动参考。</p>
+    </section>
+
+    <section id="quiz-screen" class="screen">
+      <div class="topbar quiz-topbar">
+        <span id="quiz-system-pill" class="pill quiz-system-pill">工作系统</span>
+      </div>
+
+      <div class="progress-wrap">
+        <div class="progress-meta">
+          <span id="progress-text">1 / 24</span>
+          <span id="answered-text">已答 0 题</span>
+        </div>
+        <div class="progress-track">
+          <div id="progress-bar" class="progress-bar"></div>
+        </div>
+      </div>
+
+      <article class="question-card">
+        <div id="question-system" class="system-name">工作系统</div>
+        <h2 id="question-title" class="question-title"></h2>
+        <div id="options" class="options"></div>
+      </article>
+
+      <div class="quiz-nav">
+        <button id="prev-btn" class="ghost-btn" type="button">上一题</button>
+        <button id="next-btn" class="secondary-btn" type="button">下一题</button>
+      </div>
+      <p class="microcopy">凭第一直觉选。选项没有好坏，只代表不同状态信号。</p>
+    </section>
+
+    <section id="loading-screen" class="screen">
+      <div class="loading-box">
+        <div class="loader" aria-hidden="true"></div>
+        <div>
+          <div id="loading-text" class="loading-text">正在分析你的工作系统...</div>
+          <p class="microcopy">正在生成你的职业状态报告。</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="result-screen" class="screen">
+      <div class="topbar">
+        <div class="brand">
+          <img src="assets/avatar.png" alt="柴犬的选择题头像">
+          <span>诊断报告</span>
+        </div>
+        <span id="risk-pill" class="pill">风险等级</span>
+      </div>
+
+      <header class="report-head">
+        <p class="eyebrow">你的主结果</p>
+        <h1 id="result-title" class="report-title"></h1>
+        <p id="result-subtitle" class="report-subtitle"></p>
+      </header>
+
+      <div class="metric-grid">
+        <div class="metric">
+          <div class="metric-label">当前阶段</div>
+          <div id="stage-value" class="metric-value"></div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">次级问题</div>
+          <div id="secondary-value" class="metric-value"></div>
+        </div>
+      </div>
+
+      <section class="section">
+        <h2>人生状态总览</h2>
+        <p id="overview-text"></p>
+        <div class="chart-shell">
+          <svg id="radar-chart" class="radar-chart" viewBox="0 0 260 220" role="img" aria-label="人生状态雷达图"></svg>
+        </div>
+        <div id="score-bars" class="score-bars"></div>
+      </section>
+
+      <section class="section">
+        <h2>你的离开冲动来自哪里</h2>
+        <div class="donut-layout">
+          <div id="donut-chart" class="donut-chart" aria-label="离开冲动来源占比">
+            <div id="donut-center" class="donut-center">来源<br>占比</div>
+          </div>
+          <div id="source-legend" class="legend"></div>
+        </div>
+        <p id="source-text"></p>
+      </section>
+
+      <section class="section">
+        <h2>深度分析</h2>
+        <p id="analysis-text"></p>
+        <div id="keyword-tags" class="tag-list"></div>
+      </section>
+
+      <section class="section">
+        <h2>真实消耗来源</h2>
+        <div id="drain-list" class="detail-list"></div>
+      </section>
+
+      <section class="section">
+        <h2>职业位置</h2>
+        <p id="position-text"></p>
+      </section>
+
+      <section class="section">
+        <h2>隐藏优势</h2>
+        <p id="strength-text"></p>
+        <div id="advantage-list" class="detail-list"></div>
+      </section>
+
+      <section class="section">
+        <h2>职场盲区</h2>
+        <div id="blindspot-list" class="detail-list"></div>
+      </section>
+
+      <section class="section">
+        <h2>现在最不该做什么</h2>
+        <p id="avoid-text"></p>
+        <div id="warning-box" class="warning-box"></div>
+      </section>
+
+      <section class="section">
+        <h2>未来 6 个月推演</h2>
+        <div class="comparison-grid">
+          <div class="comparison-card keep">
+            <strong>保持现状</strong>
+            <span id="future-keep-text"></span>
+          </div>
+          <div class="comparison-card change">
+            <strong>开始调整</strong>
+            <span id="future-change-text"></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>未来 30 天行动路线</h2>
+        <ul id="action-list" class="route-list"></ul>
+      </section>
+
+      <div class="note">
+        本测试为趣味自我观察工具，不替代心理咨询、职业咨询或医疗建议。重大职业决定建议结合现实条件、财务安全垫和可信赖的人一起评估。
+      </div>
+
+      <div id="copy-fallback" class="copy-fallback">
+        <label for="copy-fallback-text">报告摘要</label>
+        <textarea id="copy-fallback-text" readonly></textarea>
+      </div>
+
+      <div class="sticky-actions">
+        <button id="copy-result-btn" class="secondary-btn" type="button">复制摘要</button>
+        <button id="restart-btn" class="primary-btn" type="button">重新诊断</button>
+      </div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    const QUESTIONS = [
+      {
+        system: "工作系统",
+        key: "work",
+        text: "你对目前工作的整体满意度如何？",
+        options: ["非常满意，充满热情", "比较满意，偶尔有不满", "一般，说不上满意", "很不满意，想尽快离开"]
+      },
+      {
+        system: "工作系统",
+        key: "work",
+        text: "完成一项重要任务后，你的感受是？",
+        options: ["充满成就感，期待下一个挑战", "有些满足，但很快归于平淡", "只是松了一口气", "毫无感觉，只是完成了任务"]
+      },
+      {
+        system: "工作系统",
+        key: "work",
+        text: "你觉得目前的工作能体现你的价值吗？",
+        options: ["完全能，我觉得自己很有价值", "大部分时候能", "很少能感受到", "完全没有，感觉在做无意义的事"]
+      },
+      {
+        system: "工作系统",
+        key: "work",
+        text: "你的能力与当前岗位的匹配程度如何？",
+        options: ["非常匹配，能发挥所长", "基本匹配，有些地方需要提升", "不太匹配，感觉力不从心", "完全不匹配，做着自己不擅长的事"]
+      },
+      {
+        system: "工作系统",
+        key: "work",
+        text: "想到明天要上班，你的第一反应是？",
+        options: ["期待，有想做的事情", "平静，没什么特别感觉", "有些抗拒，不想去", "非常抗拒，想到就焦虑"]
+      },
+      {
+        system: "工作系统",
+        key: "work",
+        text: "如果有人问“你是做什么的”，你的内心感受是？",
+        options: ["自豪，愿意详细介绍", "平静，如实回答", "有些尴尬，不想多说", "内心抗拒，觉得那不是真正的我"]
+      },
+      {
+        system: "能量系统",
+        key: "energy",
+        text: "你最近的睡眠质量如何？",
+        options: ["很好，每天精力充沛", "还可以，偶尔睡不好", "经常失眠或睡不踏实", "长期睡眠不足，总是很累"]
+      },
+      {
+        system: "能量系统",
+        key: "energy",
+        text: "周末或休息后，你的状态恢复得如何？",
+        options: ["完全恢复，充满活力", "基本恢复，但不如从前", "休息后还是很累", "越休息越空虚，完全恢复不了"]
+      },
+      {
+        system: "能量系统",
+        key: "energy",
+        text: "下班后，你还有精力做自己的事情吗？",
+        options: ["有很多精力，可以做喜欢的事", "有一些精力，但不多", "几乎没有精力，只想躺着", "连想都不想动，连快乐都觉得麻烦"]
+      },
+      {
+        system: "能量系统",
+        key: "energy",
+        text: "你最近是否经常拖延或注意力不集中？",
+        options: ["很少，专注力很好", "偶尔会，但能调整", "经常拖延，很难集中注意力", "几乎每天都在拖延，感觉大脑在省电模式"]
+      },
+      {
+        system: "能量系统",
+        key: "energy",
+        text: "你最近对社交活动的态度是？",
+        options: ["主动参与，享受社交", "不排斥，但也不太主动", "能推就推，不想见人", "完全不想出门，连说话都觉得累"]
+      },
+      {
+        system: "能量系统",
+        key: "energy",
+        text: "你最近是否经常想请假或消失几天？",
+        options: ["没有，我享受工作", "偶尔会想休息一下", "经常想请假，不想上班", "每天都在想逃离，想重新开始"]
+      },
+      {
+        system: "成长系统",
+        key: "growth",
+        text: "你最近是否有强烈的学习新技能欲望？",
+        options: ["有，正在学习新东西", "有一些想法，但还没开始", "没什么兴趣，觉得学了也没用", "完全没有，对什么都提不起兴趣"]
+      },
+      {
+        system: "成长系统",
+        key: "growth",
+        text: "你对探索新领域或新方向的态度是？",
+        options: ["非常积极，经常尝试新事物", "有兴趣，但缺乏行动力", "不太感兴趣，觉得现在挺好", "完全不想探索，觉得没意义"]
+      },
+      {
+        system: "成长系统",
+        key: "growth",
+        text: "你最近是否有持续学习的习惯？",
+        options: ["有，每天都会学习", "偶尔学习，不够规律", "很久没学习了", "完全没有学习动力"]
+      },
+      {
+        system: "成长系统",
+        key: "growth",
+        text: "你对未来 3-5 年的期待是？",
+        options: ["充满期待，有明确目标", "有些期待，但方向不太清晰", "没什么期待，走一步看一步", "对未来感到迷茫甚至恐惧"]
+      },
+      {
+        system: "成长系统",
+        key: "growth",
+        text: "你最近是否经常感到“人生不该只有这样”？",
+        options: ["没有，我对现状很满意", "偶尔会想，但很快放下", "经常这样想，但不知道怎么办", "每天都在想，觉得被困住了"]
+      },
+      {
+        system: "成长系统",
+        key: "growth",
+        text: "你最近是否想过换赛道或重新开始？",
+        options: ["没有，我对现在的方向很坚定", "偶尔想过，但没认真考虑", "经常想，但不知道从哪开始", "每天都在想，觉得必须改变"]
+      },
+      {
+        system: "生活系统",
+        key: "life",
+        text: "工作在你生活中的占比大约是多少？",
+        options: ["适中，工作只是生活的一部分", "偏多，但还能兼顾其他", "很多，几乎没有个人时间", "几乎全部，生活只剩工作"]
+      },
+      {
+        system: "生活系统",
+        key: "life",
+        text: "你是否有持续投入的兴趣爱好？",
+        options: ["有，每周都会投入时间", "有一些兴趣，但投入不多", "曾经有，但很久没做了", "完全没有兴趣爱好"]
+      },
+      {
+        system: "生活系统",
+        key: "life",
+        text: "你每周有多少独处放松的时间？",
+        options: ["很多，每天都有独处时间", "有一些，但不够", "很少，几乎没有自己的时间", "完全没有，一直在忙"]
+      },
+      {
+        system: "生活系统",
+        key: "life",
+        text: "你最近对健康管理的投入如何？",
+        options: ["很重视，有规律的运动和饮食", "偶尔注意，但不够规律", "很少关注，身体状态一般", "完全忽视，身体已经出问题"]
+      },
+      {
+        system: "生活系统",
+        key: "life",
+        text: "你最近是否经常羡慕别人的生活？",
+        options: ["没有，我对自己的生活很满意", "偶尔羡慕，但也能接受自己", "经常羡慕，觉得别人活得更好", "几乎每天都在羡慕，觉得自己活得很差"]
+      },
+      {
+        system: "生活系统",
+        key: "life",
+        text: "你觉得现在的生活有“活着的感觉”吗？",
+        options: ["有，每天都很充实", "大部分时候有，偶尔觉得空虚", "很少，感觉在完成任务", "完全没有，只是活着而已"]
+      }
+    ];
+
+    const RESULT_COPY = {
+      work: {
+        name: "职业错位型",
+        subtitle: "你真正想换的，不只是工作。更可能是方向。",
+        source: "你的离开冲动主要来自工作认同下降。你不是单纯讨厌上班，而是越来越难在现在的岗位里看到价值、发挥和未来感。",
+        analysis: "你消耗最多的不是体力，而是心力。继续硬撑会让你把所有问题都归因于公司，但真正需要处理的是：能力、方向、环境和成长反馈之间的错配。",
+        strength: "成长欲强，愿意为更有意义的方向投入精力。",
+        avoid: "最不该冲动裸辞。先验证方向，再决定是否换公司、换岗或换行业。",
+        actions: [
+          "第 1 周：每天记录一件最有成就感的事和一件最消耗的事。",
+          "第 2 周：梳理过去三年最喜欢的工作瞬间，找出共同能力线索。",
+          "第 3 周：了解三个感兴趣方向，只做信息收集，不急着投简历。",
+          "第 4 周：和真实从业者交流，验证想象和现实差距。"
+        ]
+      },
+      energy: {
+        name: "能量耗尽型",
+        subtitle: "你真正缺的不是辞职，而是恢复。",
+        source: "你的离开冲动主要来自长期透支。你可能把疲惫理解成“不适合”，但现在更像是身体、情绪和注意力都进入低电量模式。",
+        analysis: "你不是没有能力，也不是一定要马上换方向。更大的问题是恢复系统失效：休息不解乏，社交变负担，下班后也没有力气回到自己。",
+        strength: "责任感强，能扛事，也愿意把事情做完。",
+        avoid: "最不该继续硬撑，尤其不要在极度疲惫时做重大职业决定。",
+        actions: [
+          "第 1 周：停止额外消耗，减少无效社交、情绪劳动和不必要加班。",
+          "第 2 周：恢复身体系统，固定起床时间，增加步行，减少熬夜。",
+          "第 3 周：恢复兴趣系统，做一件不赚钱、不成长、纯喜欢的事情。",
+          "第 4 周：恢复未来感，写下如果不考虑现实压力最想把时间花在哪里。"
+        ]
+      },
+      growth: {
+        name: "成长停滞型",
+        subtitle: "你不是讨厌现在，只是已经很久没有向前了。",
+        source: "你的离开冲动主要来自成长反馈缺失。你不一定讨厌当前环境，但你越来越难相信继续这样下去会有新的可能。",
+        analysis: "你需要的不是立刻逃离，而是重新启动探索系统。现在的轨道如果只剩重复和等待，你会越来越容易把生活过成自动播放。",
+        strength: "探索欲强，对新方向、新技能和第二曲线仍然有敏感度。",
+        avoid: "最不该继续等待别人给你方向。方向通常是在小规模验证中长出来的。",
+        actions: [
+          "第 1 周：记录最近三年最快乐的 5 个时刻，找出你真正有兴趣的主题。",
+          "第 2 周：选择一个全新领域开始学习，不求变现，只求重新好奇。",
+          "第 3 周：增加陌生体验，例如课程、活动、副业样本或新圈子。",
+          "第 4 周：建立一个工作之外的成长项目，每周固定投入两次。"
+        ]
+      },
+      life: {
+        name: "活法失衡型",
+        subtitle: "你真正想换的，是现在这套人生运行方式。",
+        source: "你的离开冲动主要来自生活结构失衡。问题未必只在工作，而是工作吞掉了兴趣、健康、关系和自我感。",
+        analysis: "你可能已经进入单线程人生：忙、撑、睡、继续忙。此时换一家公司未必能解决根本问题，因为真正需要调整的是人生比例。",
+        strength: "执行力强，一旦确定方向，能持续推进现实改变。",
+        avoid: "最不该把所有问题都归因于工作。只换工作但不改生活结构，可能很快回到同一种疲惫。",
+        actions: [
+          "第 1 周：记录最近一年真正开心的 10 个时刻。",
+          "第 2 周：恢复一个曾经喜欢但放弃的兴趣。",
+          "第 3 周：建立工作之外的第二人生重心，不求成果，只求持续。",
+          "第 4 周：重构时间比例，先让健康、兴趣、关系各有一个固定位置。"
+        ]
+      }
+    };
+
+    const REPORT_DETAILS = {
+      work: {
+        keywords: ["价值感下降", "方向错配", "成长断层", "身份认同弱", "冲动离职风险"],
+        position: "你现在更像站在职业路线的岔路口：不是完全没有能力，也不是一定要离开公司，而是当前岗位无法继续承载你的成长感和自我认同。你真正需要判断的是：这份工作是短期阶段性不适，还是已经和你的长期方向发生错配。",
+        drains: [
+          ["价值反馈变弱", "你做完事情后很难获得真实满足感，更多只是“终于结束了”。这种状态会慢慢削弱你对工作的认同。"],
+          ["能力使用不足", "你可能不是做不了现在的事，而是觉得自己重要的能力没有被看见、没有被使用，久了就会产生被浪费感。"],
+          ["未来感不足", "当你看不到 6 个月、1 年后的变化时，工作就会从成长路径变成重复任务。"]
+        ],
+        advantages: [
+          ["方向敏感度高", "你对“哪里不对劲”有较强感知，说明你不是麻木地接受现状。"],
+          ["成长驱动力强", "只要方向重新对齐，你通常能投入很多精力继续推进。"],
+          ["适合做阶段复盘", "你适合用事实记录判断路径，不适合只靠情绪决定去留。"]
+        ],
+        blindspots: [
+          ["容易把方向问题简化成公司问题", "如果只换公司但不重新确认方向，可能很快进入下一轮错配。"],
+          ["容易在低谷时做大决定", "情绪最高的时候不是最适合做离职、转行、搬家等高成本选择的时候。"],
+          ["容易忽略现实验证", "想象中的新方向和真实工作日常可能差距很大，必须先小样本接触。"]
+        ],
+        warning: "不要把“我想离开”直接等同于“我必须马上辞职”。你现在更需要做的是方向验证，而不是立刻切断收入和稳定性。",
+        futureKeep: "继续保持现状，你可能会越来越难从工作里获得成就感，开始对岗位、团队和自己都失去耐心。",
+        futureChange: "如果开始调整，你会先通过记录和外部访谈确认方向，再决定是换岗、换行业，还是为第二曲线做准备。"
+      },
+      energy: {
+        keywords: ["长期透支", "恢复困难", "情绪库存低", "低电量模式", "硬撑风险"],
+        position: "你现在最核心的问题不是“不适合这份工作”，而是恢复系统已经被消耗到很低。你对离开的渴望，很多时候来自身体和情绪想要停下来，而不是理性上已经完成职业判断。",
+        drains: [
+          ["休息不恢复", "休息日只能让你暂停工作，但很难真正补回精力。你可能经常休息完还是累。"],
+          ["情绪劳动偏多", "除了任务本身，你还在处理沟通、期待、责任和别人的情绪，这些都在消耗你。"],
+          ["个人时间被压缩", "下班后的时间没有真正回到自己身上，久了会觉得生活只剩工作后的残余。"]
+        ],
+        advantages: [
+          ["责任感强", "你不是轻易放弃的人，很多时候会先扛住，再考虑自己。"],
+          ["执行稳定", "即使状态不好，你仍然能把基本事情推进完。"],
+          ["恢复后弹性高", "只要能把能量拉回来，你的判断力和行动力会明显恢复。"]
+        ],
+        blindspots: [
+          ["把疲惫误判成方向错误", "极度疲惫时，你会倾向于否定一切，包括工作、城市、关系和自己。"],
+          ["习惯继续加码", "你可能越累越想靠效率、计划和自责解决问题，但这会继续消耗恢复系统。"],
+          ["忽略身体信号", "睡眠、饮食、运动、注意力这些基础系统，比职业规划更早影响你的决策质量。"]
+        ],
+        warning: "现在最危险的是继续硬撑，然后在崩溃边缘做重大决定。先恢复，再判断，顺序不能反。",
+        futureKeep: "继续保持现状，你可能会从疲惫发展到麻木，开始对原本喜欢的事也失去兴趣。",
+        futureChange: "如果开始调整，你会先减少额外消耗、恢复睡眠和身体节律，再重新判断工作到底要不要换。"
+      },
+      growth: {
+        keywords: ["成长停滞", "未来感下降", "探索欲被压住", "第二曲线", "等待风险"],
+        position: "你现在卡住的点更像“人生没有向前走”。你未必讨厌当前工作，但你会越来越难接受每天只是重复、等待、维持。你需要的是新的反馈系统，而不是单纯换一个环境。",
+        drains: [
+          ["成长反馈缺失", "你做的事情可能越来越熟练，但没有新的能力增长，也没有新的兴奋感。"],
+          ["好奇心下降", "不是你不想探索，而是长期没有空间探索，导致好奇心被压低。"],
+          ["未来画面模糊", "当未来 3-5 年没有清晰期待时，你会对当下每一天都更容易失去耐心。"]
+        ],
+        advantages: [
+          ["探索欲仍在", "你并没有完全放弃变化，只是需要一个低压力入口重新启动。"],
+          ["学习迁移能力好", "你适合把旧经验迁移到新方向，而不是从零推翻自己。"],
+          ["适合小步试错", "你不需要马上换赛道，可以先用小项目恢复未来感。"]
+        ],
+        blindspots: [
+          ["等待完美方向", "方向通常不是想出来的，而是在小规模尝试里被验证出来的。"],
+          ["容易低估复利", "你可能嫌小行动太慢，但第二曲线往往就是靠每周稳定投入长出来。"],
+          ["把新鲜感当方向", "真正适合你的方向，不只让你兴奋，也要能承受重复和反馈延迟。"]
+        ],
+        warning: "不要继续等一个“突然清晰”的答案。你需要先恢复探索动作，再让方向慢慢显形。",
+        futureKeep: "继续保持现状，你可能会越来越习惯低期待生活，表面稳定，内在越来越空。",
+        futureChange: "如果开始调整，你会用小项目、新课程、新圈子重新建立成长反馈，慢慢看见第二条路。"
+      },
+      life: {
+        keywords: ["活法失衡", "单线程人生", "兴趣缺失", "意义感下降", "人生比例重构"],
+        position: "你现在的问题已经不只属于职业层面，而是整套生活比例失衡。工作占据太多位置，兴趣、健康、关系和自我感被压缩，导致你觉得想换的不是一份工作，而是一种活法。",
+        drains: [
+          ["生活被工作挤压", "你不是没有生活能力，而是可支配时间和心理空间长期不足。"],
+          ["兴趣系统断线", "那些不赚钱、不考核、只让你觉得自己还活着的事情，可能已经很久没出现。"],
+          ["意义感变薄", "当每天都在完成任务，人的内在会慢慢失去“这是我的人生”的感觉。"]
+        ],
+        advantages: [
+          ["执行力强", "你一旦确认要改变，通常能把计划落到现实里。"],
+          ["结构意识强", "你适合从时间比例、生活模块和长期投入方向来重建状态。"],
+          ["能承受长期调整", "你要的不是短期刺激，而是更稳定、更像自己的生活系统。"]
+        ],
+        blindspots: [
+          ["把所有问题都推给工作", "如果生活结构不变，换工作后也可能继续被同一种模式吞掉。"],
+          ["忽略小快乐的恢复价值", "你可能觉得兴趣不重要，但它是恢复自我感的重要入口。"],
+          ["想一次性重启人生", "真正有效的重构通常是先恢复一小块自己，而不是立刻推翻全部。"]
+        ],
+        warning: "不要只追求“离开现在”。如果没有重建生活结构，新环境也可能很快变成旧循环。",
+        futureKeep: "继续保持现状，你可能会越来越像在替任务活着，工作之外的自己持续变薄。",
+        futureChange: "如果开始调整，你会先拿回一部分时间和兴趣，再重新决定工作在你人生里的比例。"
+      }
+    };
+
+    const SYSTEM_LABELS = {
+      work: "工作系统",
+      energy: "能量系统",
+      growth: "成长系统",
+      life: "生活系统"
+    };
+
+    const state = {
+      current: 0,
+      answers: Array(QUESTIONS.length).fill(null),
+      locked: false,
+      result: null
+    };
+
+    const screens = {
+      home: document.getElementById("home-screen"),
+      quiz: document.getElementById("quiz-screen"),
+      loading: document.getElementById("loading-screen"),
+      result: document.getElementById("result-screen")
+    };
+
+    const keys = ["A", "B", "C", "D"];
+    const loadingSteps = [
+      "正在读取你的选择组合...",
+      "正在分析你的工作系统...",
+      "正在识别你的真实消耗来源...",
+      "正在评估你的人生能量状态...",
+      "正在交叉比对成长与生活结构...",
+      "正在计算核心问题与次级问题...",
+      "正在生成风险等级与未来推演...",
+      "正在整理未来 30 天行动路线..."
+    ];
+
+    function showScreen(name) {
+      Object.values(screens).forEach(screen => screen.classList.remove("active"));
+      screens[name].classList.add("active");
+      window.scrollTo({ top: 0, behavior: "instant" });
+    }
+
+    function renderQuestion() {
+      const question = QUESTIONS[state.current];
+      const answeredCount = state.answers.filter(answer => answer !== null).length;
+      const progress = ((state.current + 1) / QUESTIONS.length) * 100;
+
+      document.getElementById("quiz-system-pill").textContent = question.system;
+      document.getElementById("question-system").textContent = question.system;
+      document.getElementById("question-title").textContent = question.text;
+      document.getElementById("progress-text").textContent = `${state.current + 1} / ${QUESTIONS.length}`;
+      document.getElementById("answered-text").textContent = `已答 ${answeredCount} 题`;
+      document.getElementById("progress-bar").style.width = `${progress}%`;
+      document.getElementById("prev-btn").disabled = state.current === 0;
+      document.getElementById("next-btn").textContent = state.current === QUESTIONS.length - 1 ? "生成报告" : "下一题";
+
+      const selected = state.answers[state.current];
+      const options = document.getElementById("options");
+      options.innerHTML = "";
+
+      question.options.forEach((text, index) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = `option-btn${selected === index ? " selected" : ""}`;
+        button.innerHTML = `<span class="option-key">${keys[index]}</span><span class="option-text">${text}</span>`;
+        button.addEventListener("click", () => selectAnswer(index));
+        options.appendChild(button);
+      });
+    }
+
+    function selectAnswer(index) {
+      if (state.locked) return;
+      state.answers[state.current] = index;
+      state.locked = true;
+      renderQuestion();
+      setTimeout(() => {
+        state.locked = false;
+        if (state.current < QUESTIONS.length - 1) {
+          state.current += 1;
+          renderQuestion();
+        }
+      }, 260);
+    }
+
+    function goNext() {
+      if (state.answers[state.current] === null) {
+        toast("先选这一题，再继续。");
+        return;
+      }
+      if (state.current >= QUESTIONS.length - 1) {
+        if (state.answers.some(answer => answer === null)) {
+          const firstBlank = state.answers.findIndex(answer => answer === null);
+          state.current = firstBlank;
+          renderQuestion();
+          toast("还有题目没答完。");
+          return;
+        }
+        startLoading();
+        return;
+      }
+      state.current += 1;
+      renderQuestion();
+    }
+
+    function calculateResult() {
+      const scores = { work: 0, energy: 0, growth: 0, life: 0 };
+      QUESTIONS.forEach((question, index) => {
+        const answer = state.answers[index];
+        scores[question.key] += answer === null ? 0 : answer + 1;
+      });
+
+      const ordered = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+      const total = Object.values(scores).reduce((sum, value) => sum + value, 0);
+      const risk = total <= 42 ? "低风险" : total <= 60 ? "中风险" : total <= 78 ? "高风险" : "极高风险";
+      const stage = total <= 42 ? "可调整期" : total <= 60 ? "明显错配期" : total <= 78 ? "高消耗期" : "系统重构期";
+
+      return {
+        scores,
+        total,
+        risk,
+        stage,
+        primaryKey: ordered[0][0],
+        secondaryKey: ordered[1][0]
+      };
+    }
+
+    function startLoading() {
+      showScreen("loading");
+      let step = 0;
+      const loadingText = document.getElementById("loading-text");
+      loadingText.textContent = loadingSteps[0];
+      const timer = setInterval(() => {
+        step += 1;
+        if (step < loadingSteps.length) {
+          loadingText.textContent = loadingSteps[step];
+        } else {
+          clearInterval(timer);
+          state.result = calculateResult();
+          renderResult();
+          showScreen("result");
+        }
+      }, 950);
+    }
+
+    function renderResult() {
+      const result = state.result;
+      const copy = RESULT_COPY[result.primaryKey];
+      const detail = REPORT_DETAILS[result.primaryKey];
+      const secondaryLabel = SYSTEM_LABELS[result.secondaryKey];
+      document.getElementById("risk-pill").textContent = result.risk;
+      document.getElementById("result-title").textContent = copy.name;
+      document.getElementById("result-subtitle").textContent = copy.subtitle;
+      document.getElementById("stage-value").textContent = result.stage;
+      document.getElementById("secondary-value").textContent = secondaryLabel;
+      document.getElementById("overview-text").textContent = `你的总分为 ${result.total} 分，主问题落在${SYSTEM_LABELS[result.primaryKey]}，次级问题落在${secondaryLabel}。分数越高，代表这个系统对你当前状态的消耗越明显。`;
+      document.getElementById("source-text").textContent = copy.source;
+      document.getElementById("analysis-text").textContent = copy.analysis;
+      document.getElementById("position-text").textContent = detail.position;
+      document.getElementById("strength-text").textContent = copy.strength;
+      document.getElementById("avoid-text").textContent = copy.avoid;
+      document.getElementById("warning-box").textContent = detail.warning;
+      document.getElementById("future-keep-text").textContent = detail.futureKeep;
+      document.getElementById("future-change-text").textContent = detail.futureChange;
+      renderTags("keyword-tags", detail.keywords);
+      renderDetailList("drain-list", detail.drains);
+      renderDetailList("advantage-list", detail.advantages);
+      renderDetailList("blindspot-list", detail.blindspots);
+      renderRadarChart(result.scores);
+      renderDonutChart(result.scores);
+
+      const scoreBars = document.getElementById("score-bars");
+      scoreBars.innerHTML = "";
+      Object.entries(result.scores).forEach(([key, value]) => {
+        const row = document.createElement("div");
+        row.className = "score-row";
+        const status = getSystemStatus(value);
+        row.innerHTML = `
+          <span>${SYSTEM_LABELS[key]}</span>
+          <span class="status-chip ${status.level}">${status.text}</span>
+          <span class="bar-track"><span class="bar-fill" style="width:${(value / 24) * 100}%"></span></span>
+          <strong>${value}</strong>
+        `;
+        scoreBars.appendChild(row);
+      });
+
+      const actionList = document.getElementById("action-list");
+      actionList.innerHTML = "";
+      copy.actions.forEach(action => {
+        const item = document.createElement("li");
+        item.textContent = action;
+        actionList.appendChild(item);
+      });
+    }
+
+    function getSystemStatus(value) {
+      if (value >= 21) return { text: "高压", level: "critical" };
+      if (value >= 17) return { text: "偏高", level: "high" };
+      if (value >= 13) return { text: "中等", level: "mid" };
+      return { text: "稳定", level: "low" };
+    }
+
+    function renderTags(containerId, tags) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = "";
+      tags.forEach(tag => {
+        const item = document.createElement("span");
+        item.className = "tag";
+        item.textContent = tag;
+        container.appendChild(item);
+      });
+    }
+
+    function renderDetailList(containerId, items) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = "";
+      items.forEach(([title, text]) => {
+        const item = document.createElement("div");
+        item.className = "detail-item";
+        const strong = document.createElement("strong");
+        strong.textContent = title;
+        const span = document.createElement("span");
+        span.textContent = text;
+        item.appendChild(strong);
+        item.appendChild(span);
+        container.appendChild(item);
+      });
+    }
+
+    function renderRadarChart(scores) {
+      const labels = [
+        ["work", "工作压力"],
+        ["energy", "能量消耗"],
+        ["growth", "成长停滞"],
+        ["life", "生活失衡"]
+      ];
+      const center = { x: 130, y: 104 };
+      const radius = 72;
+      const maxScore = 24;
+      const angles = [-90, 0, 90, 180];
+      const points = labels.map(([key], index) => {
+        const ratio = Math.max(0.18, scores[key] / maxScore);
+        const angle = angles[index] * Math.PI / 180;
+        return {
+          x: center.x + Math.cos(angle) * radius * ratio,
+          y: center.y + Math.sin(angle) * radius * ratio
+        };
+      });
+      const axisPoints = angles.map(angleDeg => {
+        const angle = angleDeg * Math.PI / 180;
+        return {
+          x: center.x + Math.cos(angle) * radius,
+          y: center.y + Math.sin(angle) * radius
+        };
+      });
+      const grid = [0.33, 0.66, 1].map(ratio => {
+        return angles.map(angleDeg => {
+          const angle = angleDeg * Math.PI / 180;
+          return `${center.x + Math.cos(angle) * radius * ratio},${center.y + Math.sin(angle) * radius * ratio}`;
+        }).join(" ");
+      });
+      const labelPositions = [
+        { x: 130, y: 18, anchor: "middle" },
+        { x: 228, y: 108, anchor: "middle" },
+        { x: 130, y: 204, anchor: "middle" },
+        { x: 32, y: 108, anchor: "middle" }
+      ];
+      const svg = document.getElementById("radar-chart");
+      svg.innerHTML = `
+        ${grid.map(poly => `<polygon points="${poly}" fill="none" stroke="#ded5c7" stroke-width="1"></polygon>`).join("")}
+        ${axisPoints.map(point => `<line x1="${center.x}" y1="${center.y}" x2="${point.x}" y2="${point.y}" stroke="#e7ded0" stroke-width="1"></line>`).join("")}
+        <polygon points="${points.map(point => `${point.x},${point.y}`).join(" ")}" fill="rgba(37,109,133,0.22)" stroke="#256d85" stroke-width="2"></polygon>
+        ${points.map(point => `<circle cx="${point.x}" cy="${point.y}" r="3.5" fill="#256d85"></circle>`).join("")}
+        ${labels.map(([, label], index) => `<text x="${labelPositions[index].x}" y="${labelPositions[index].y}" text-anchor="${labelPositions[index].anchor}" fill="#6f6a61" font-size="11" font-weight="700">${label}</text>`).join("")}
+      `;
+    }
+
+    function renderDonutChart(scores) {
+      const colors = {
+        work: "#256d85",
+        energy: "#7a8798",
+        growth: "#8aa376",
+        life: "#d7a15e"
+      };
+      const total = Object.values(scores).reduce((sum, value) => sum + value, 0);
+      let start = 0;
+      const entries = Object.entries(scores);
+      const stops = entries.map(([key, value], index) => {
+        const percent = total ? Math.round(value / total * 100) : 0;
+        const end = index === entries.length - 1 ? 100 : start + percent;
+        const segment = `${colors[key]} ${start}% ${end}%`;
+        start = end;
+        return { key, value, percent, segment };
+      });
+      const gradient = `conic-gradient(${stops.map(item => item.segment).join(", ")})`;
+      document.getElementById("donut-chart").style.background = gradient;
+      document.getElementById("donut-center").innerHTML = `${SYSTEM_LABELS[state.result.primaryKey]}<br>${stops.find(item => item.key === state.result.primaryKey)?.percent || 0}%`;
+
+      const legend = document.getElementById("source-legend");
+      legend.innerHTML = "";
+      stops.forEach(item => {
+        const row = document.createElement("div");
+        row.className = "legend-item";
+        row.innerHTML = `<span class="legend-dot" style="background:${colors[item.key]}"></span><span>${SYSTEM_LABELS[item.key]}</span><strong>${item.percent}%</strong>`;
+        legend.appendChild(row);
+      });
+    }
+
+    async function copyResult() {
+      const result = state.result || calculateResult();
+      const copy = RESULT_COPY[result.primaryKey];
+      const detail = REPORT_DETAILS[result.primaryKey];
+      const text = [
+        "我的职业状态测试结果：",
+        copy.name,
+        copy.subtitle,
+        `当前阶段：${result.stage}`,
+        `风险等级：${result.risk}`,
+        `核心问题：${SYSTEM_LABELS[result.primaryKey]}`,
+        `次级问题：${SYSTEM_LABELS[result.secondaryKey]}`,
+        `关键标签：${detail.keywords.join(" / ")}`,
+        `真实消耗：${detail.drains.map(item => item[0]).join(" / ")}`,
+        "30 天建议：",
+        ...copy.actions
+      ].join("\\n");
+
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(text);
+        } else {
+          fallbackCopyText(text);
+        }
+        hideCopyFallback();
+        toast("报告摘要已复制。");
+      } catch (error) {
+        try {
+          fallbackCopyText(text);
+          hideCopyFallback();
+          toast("报告摘要已复制。");
+        } catch (fallbackError) {
+          showCopyFallback(text);
+          toast("已展开摘要，可手动复制。");
+        }
+      }
+    }
+
+    function fallbackCopyText(text) {
+      const textarea = document.createElement("textarea");
+      textarea.value = text;
+      textarea.setAttribute("readonly", "");
+      textarea.style.position = "fixed";
+      textarea.style.left = "-9999px";
+      textarea.style.top = "0";
+      document.body.appendChild(textarea);
+      textarea.select();
+      const ok = document.execCommand("copy");
+      document.body.removeChild(textarea);
+      if (!ok) throw new Error("copy command failed");
+    }
+
+    function showCopyFallback(text) {
+      const box = document.getElementById("copy-fallback");
+      const textarea = document.getElementById("copy-fallback-text");
+      textarea.value = text;
+      box.classList.add("active");
+      textarea.focus();
+      textarea.select();
+    }
+
+    function hideCopyFallback() {
+      document.getElementById("copy-fallback").classList.remove("active");
+    }
+
+    function resetQuiz() {
+      state.current = 0;
+      state.answers = Array(QUESTIONS.length).fill(null);
+      state.locked = false;
+      state.result = null;
+      renderQuestion();
+      showScreen("home");
+    }
+
+    function toast(message) {
+      const toastEl = document.getElementById("toast");
+      toastEl.textContent = message;
+      toastEl.classList.add("show");
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(() => toastEl.classList.remove("show"), 1700);
+    }
+
+    document.getElementById("start-btn").addEventListener("click", () => {
+      renderQuestion();
+      showScreen("quiz");
+    });
+
+    document.getElementById("prev-btn").addEventListener("click", () => {
+      if (state.current > 0) {
+        state.current -= 1;
+        renderQuestion();
+      }
+    });
+
+    document.getElementById("next-btn").addEventListener("click", goNext);
+    document.getElementById("restart-btn").addEventListener("click", resetQuiz);
+    document.getElementById("copy-result-btn").addEventListener("click", copyResult);
+
+    try {
+      const saved = sessionStorage.getItem("workLifeQuizAnswers");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length === QUESTIONS.length) {
+          state.answers = parsed;
+        }
+      }
+    } catch (error) {}
+
+    window.addEventListener("beforeunload", () => {
+      sessionStorage.setItem("workLifeQuizAnswers", JSON.stringify(state.answers));
+    });
+  </script>
+</body>
+</html>
