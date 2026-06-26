@@ -3,6 +3,9 @@
 创建日期：2026-06-25
 用途：小红书 AI 心理测试 MVP 第一款付费测试页
 
+正式地址：https://huananhuxu-debug.github.io/work-life-h5/
+GitHub 仓库：https://github.com/huananhuxu-debug/work-life-h5
+
 ## 1. 文件入口
 
 ```text
