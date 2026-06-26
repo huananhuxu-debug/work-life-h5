@@ -116,11 +116,27 @@ tcb：/Users/huananhu/.local/bin/tcb
 当前目录已配置 `cloudbaserc.json`。以后修改 H5 后，在本目录执行：
 
 ```bash
-tcb app deploy work-life-h5 --force
+tcb app deploy work-life-h5 \
+  -e dogchoice-d0ge10y4pa4f11f64 \
+  --framework static \
+  --install-command '' \
+  --build-command '' \
+  --output-dir ./ \
+  --deploy-path / \
+  --force
 ```
 
 CLI 会部署到腾讯云 CloudBase 静态网站托管，正式访问地址保持：
 
 ```text
 https://work-life-h5-dogchoice-d0ge10y4pa4f11f64.webapps.tcloudbase.com/
+```
+
+2026-06-26 实测结果：
+
+```text
+覆盖部署成功
+最新版本：work-life-h5-002
+主页返回：200
+头像资源返回：200
 ```
