@@ -3,7 +3,8 @@
 创建日期：2026-06-25
 用途：小红书 AI 心理测试 MVP 第一款付费测试页
 
-正式地址：https://huananhuxu-debug.github.io/work-life-h5/
+正式地址：https://work-life-h5-dogchoice-d0ge10y4pa4f11f64.webapps.tcloudbase.com/
+备用地址：https://huananhuxu-debug.github.io/work-life-h5/
 GitHub 仓库：https://github.com/huananhuxu-debug/work-life-h5
 
 ## 1. 文件入口
@@ -13,7 +14,7 @@ index.html
 assets/avatar.png
 ```
 
-本页面是纯静态 H5，可以直接用浏览器打开，也可以部署到 GitHub Pages、静态托管平台或类似秒哒的 H5 平台。
+本页面是纯静态 H5，可以直接用浏览器打开。当前正式部署在腾讯云 CloudBase 静态网站托管，GitHub Pages 保留为备用部署。
 
 ## 2. 产品结构
 
@@ -86,7 +87,7 @@ D = 4 分
 
 ```text
 商品链接承接方式
-正式部署 URL
+小红书商品链接承接方式
 是否补充商品详情页文案
 是否接入真实支付后自动发货
 ```
